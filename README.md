@@ -30,13 +30,7 @@ cd log-pulse
 docker-compose up --build
 ```
 
-That's it. On first run, Postgres initializes the schema automatically from `db/init.sql`.
-
-Then seed 100K rows of sample data:
-
-```bash
-docker exec takehome-api-1 python seed.py
-```
+That's it. On first run, Postgres initializes the schema from `db/init.sql` and the API container automatically seeds 100K rows of sample data — this takes about 30 seconds. The dashboard will be available at `http://localhost:5173` once seeding completes and you see `Application startup complete.` in the logs. Subsequent restarts detect the existing data and skip seeding.
 
 | Service | URL |
 |---|---|
