@@ -152,6 +152,30 @@ The `idx_logs_timestamp` index drives the main log fetch and timeline queries. T
 
 ---
 
+## Kubernetes
+
+Manifests for all three services are in the `k8s/` directory. Before applying, build and push the images to a registry:
+
+```bash
+docker build -t your-registry/log-pulse-api:latest ./backend
+docker push your-registry/log-pulse-api:latest
+
+docker build -t your-registry/log-pulse-frontend:latest ./frontend
+docker push your-registry/log-pulse-frontend:latest
+```
+
+Update the `image:` fields in `k8s/api.yaml` and `k8s/frontend.yaml` with your registry paths, then apply:
+
+```bash
+kubectl apply -f k8s/db.yaml
+kubectl apply -f k8s/api.yaml
+kubectl apply -f k8s/frontend.yaml
+```
+
+The database credentials are stored in a Kubernetes `Secret` defined in `k8s/db.yaml`. The frontend is exposed via `NodePort` on port `30573`. The API and database use `ClusterIP` and are internal to the cluster only.
+
+---
+
 ## Project Structure
 
 ```
@@ -173,5 +197,9 @@ log-pulse/
 │   └── package.json
 ├── db/
 │   └── init.sql         # Schema and indexes
+├── k8s/
+│   ├── db.yaml          # Postgres deployment, PVC, and secret
+│   ├── api.yaml         # FastAPI deployment
+│   └── frontend.yaml    # Svelte deployment (NodePort)
 └── docker-compose.yml
 ```
